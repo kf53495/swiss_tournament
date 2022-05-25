@@ -45,6 +45,7 @@ void main() {
     matchings();
     inputResult();
     printResult();
+    print(matchingHistories);
     avoidDuplication();
   }
   print('最終結果');
@@ -143,8 +144,9 @@ void inputResult() {
 }
 
 void printResult() {
-  var input5 = stdin.readLineSync();
   while (0 == 0) {
+    print('f: 入力したデータを修正  c: 入力したデータを確認  e: 入力を終了する');
+    var input5 = stdin.readLineSync();
     if (input5 != null) {
       var guidance = input5;
       if (guidance == 'f') {
