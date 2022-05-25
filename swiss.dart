@@ -43,6 +43,7 @@ void main() {
   settings();
   for (var i = 0; i < gameNum; i++) {
     matchings();
+    inputResult();
     printResult();
     avoidDuplication();
   }
@@ -103,29 +104,6 @@ void avoidDuplication() {
   }
 }
 
-// sが2回入力されたたれたときの対処を考えること
-void printResult() {
-  while (0 == 0) {
-    print('s: 入力開始  f: 入力したデータを修正 e: 入力を終了する');
-    var input5 = stdin.readLineSync();
-    if (input5 != null) {
-      var guidance = input5;
-      if (guidance == 's') {
-        inputResult();
-      } else if (guidance == 'f') {
-        print('fix');
-      } else if (guidance == 'e') {
-        print('入力を終了しました');
-        break;
-      }
-    }
-  }
-  members.sort((a, b) => b[1].compareTo(a[1]));
-  members.asMap().forEach((ranking, member) {
-    print('${ranking + 1}位: ${member[0]} ${member[1]}石');
-  });
-}
-
 void inputResult() {
   for (var i = 0; i < memberNum / 2; i++) {
     print('結果を入力する試合のtable番号を入力してください');
@@ -162,6 +140,28 @@ void inputResult() {
     print(
         '${members[i * 2][2][matchCount - 1]} 対 ${members[i * 2 + 1][2][matchCount - 1]}');
   }
+}
+
+void printResult() {
+  var input5 = stdin.readLineSync();
+  while (0 == 0) {
+    if (input5 != null) {
+      var guidance = input5;
+      if (guidance == 'f') {
+        print('fix');
+      } else if (guidance == 'c') {
+        checkResult();
+      } else if (guidance == 'e') {
+        print('入力を終了しました');
+        break;
+      }
+    }
+  }
+
+  members.sort((a, b) => b[1].compareTo(a[1]));
+  members.asMap().forEach((ranking, member) {
+    print('${ranking + 1}位: ${member[0]} ${member[1]}石');
+  });
 }
 
 void checkResult() {
