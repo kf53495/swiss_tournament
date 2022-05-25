@@ -44,13 +44,13 @@ void main() {
   for (var i = 0; i < gameNum; i++) {
     matchings();
     printResult();
+    avoidDuplication();
   }
   print('最終結果');
   members.asMap().forEach((ranking, member) {
     print(
         '${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石 (${member[2]}))');
   });
-  print(matchingHistories);
 }
 
 void settings() {
@@ -88,10 +88,19 @@ void matchings() {
 }
 
 void avoidDuplication() {
-  //のちに実装
   //重複したマッチを回避する
   //matchingHistoriesにて対局履歴を保存して、重複があった場合並び替えるようにする
-  if (matchCount * )
+  // 1.対局履歴確認、重複マッチを見つける
+  // 2.ひとつ前の人と順番を入れ替える。前が存在しない場合は無視する。
+  // 3.後の人と入れ替える。後ろが存在しない場合は無視する。
+  // 4.2と3の入れ替え先を2つ先、3つ先と伸ばしていく。
+  // 5.最後まで実施しても重複しないマッチができない場合は手動で入力する。この都合でマッチ履歴はlistがいいかも
+  for (var i = 0; i < memberNum / 2; i++) {
+    if (matchingHistories
+        .contains([(members[i * 2][0]), (members[i * 2 + 1][0])])) {
+      print('ok');
+    }
+  }
 }
 
 // sが2回入力されたたれたときの対処を考えること
