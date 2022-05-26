@@ -68,9 +68,6 @@ void matchings() {
 void avoidDuplication() {
   List temporaryMembers = members;
   for (var i = 0; i < matchNum; i++) {
-    //一回の対局数回、処理を繰り返す
-    // var playerA = temporaryMembers[i * 2][0];
-    // var playerB = temporaryMembers[i * 2 + 1][0];
     matchingHistories.forEach((element) {
       ///組み合わせがmatchingHistoriesに存在するかチェック
       if (element.contains(temporaryMembers[i * 2][0]) &&
@@ -154,7 +151,6 @@ bool checkDuplication(list) {
       }
     });
   }
-  result = true; //一時的に必ずtrueを返すように設定
   return result;
 }
 
