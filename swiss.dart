@@ -16,11 +16,10 @@ void main() {
     inputResult();
     printResult();
     print(matchingHistories);
-    if (i == gameNum) break;
+    if (i == gameNum - 1) break;
     avoidDuplication();
   }
   print('最終結果');
-  members.sort((a, b) => b[1].compareTo(a[1]));
   members.asMap().forEach((ranking, member) {
     print(
         '${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石 (${member[2]}))');
@@ -207,9 +206,13 @@ void printResult() {
     }
   }
   //勝利数、石数の順でソートできるようにすること
-  members.sort((a, b) => b[1].compareTo(a[1]));
+  members.sort(((a, b) {
+    int result = b[3].compareTo(a[3]);
+    if (result != 0) return result;
+    return b[1].compareTo(a[1]);
+  }));
   members.asMap().forEach((ranking, member) {
-    print('${ranking + 1}位: ${member[0]} ${member[1]}石');
+    print('${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石');
   });
 }
 
