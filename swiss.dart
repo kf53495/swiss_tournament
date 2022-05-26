@@ -83,6 +83,7 @@ void avoidDuplication() {
             playerB = members[i * 2];
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + before] = playerB;
+            print('${i + 1}: いちばんめ');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -94,8 +95,7 @@ void avoidDuplication() {
             playerB = members[i * 2 + 1];
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + after] = playerB;
-            print('にばんめ');
-            print(temporaryMembers);
+            print('${i + 1}: にばんめ');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -108,8 +108,7 @@ void avoidDuplication() {
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + after] = playerB;
             after++;
-            print('さんばんめ');
-            print(temporaryMembers);
+            print('${i + 1}: さんばんめ');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -122,8 +121,7 @@ void avoidDuplication() {
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + before] = playerB;
             before--;
-            print('よんばんめ');
-            print(temporaryMembers);
+            print('${i + 1}: よんばんめ');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -141,15 +139,26 @@ bool checkDuplication(list) {
   //matchingHistoriesに更新後の組み合わせがあるかチェックする
   bool result = false;
   for (var i = 0; i < matchNum; i++) {
-    matchingHistories.forEach((element) {
-      if (element.contains(list[i * 2][0]) &&
-          element.contains(list[i * 2 + 1][0])) {
-        print('重複まだあるよ');
-        result = false;
-      } else {
-        result = true;
-      }
-    });
+    // matchingHistories.forEach((element) {
+    //   if (element.contains(list[i * 2][0]) &&
+    //       element.contains(list[i * 2 + 1][0])) {
+    //     print('${i + 1}: cd重複まだあるよ');
+    //     result = false;
+    //   } else {
+    //     print('${i + 1}: cd重複ないよ！');
+    //     result = true;
+    //   }
+    // });
+    if (matchingHistories.any((element) =>
+        element.contains(list[i * 2][0]) &&
+        element.contains(list[i * 2 + 1][0]))) {
+      print('${i + 1}: cd重複まだあるよ');
+      result = false;
+      break;
+    } else {
+      print('${i + 1}: cd重複ないよ！');
+      result = true;
+    }
   }
   return result;
 }
