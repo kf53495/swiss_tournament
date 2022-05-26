@@ -22,7 +22,7 @@ void main() {
   print('最終結果');
   members.asMap().forEach((ranking, member) {
     print(
-        '${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石 (${member[2]}))');
+        '${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石 ${member[2]}');
   });
 }
 
@@ -126,7 +126,6 @@ void avoidDuplication() {
             continue;
           }
           print('自動マッチングに失敗しました');
-          print(matchingHistories);
           break;
         }
       }
