@@ -1,40 +1,15 @@
-// 	- メンバーナンバーをつける(これで管理する)
 // ・メンバー名を訂正
-// ・メンバー入力後、マッチング相手をランダムで決める
-// ・石数が多かった順番にランキングをつける
 // ・引き分けは0.5勝扱いにする
 
 // 結果入力画面
-// ・テーブル番号から結果を入力する
-// 	- 対戦相手も自動入力されるとなお良い
-//    - 一回戦、2回戦ごとに配列で管理するのはあり。
-// 		- 途中で指定されたキーを入力すると入力途中経過が見れる
-//         -
-// ・一度対戦した相手はもう一度当たらないようにすること
+// ・一度対戦した相手はもう一度当たらないようにすること⇨avoidDuplication
 // ・奇数人の場合はいったん考慮しないこととする
-
-// 終わったら次の対戦相手が表示される。
-
-// 以上を規定の試合数くりかえす
-
-// 全て終わったら試合終了し、自動で結果表示
-
-// 必要class
-// ・対戦数管理
-// ・選手名入力
-// ・選手名修正
-// ・入力上方修正
-// ・対局履歴
-// ・対局結果入力と保存　保存が終われば表示
-
-// class外で管理
-// ・メンバー数、名前、対局履歴、マッチング
-// ・
 
 import 'dart:io';
 
 int gameNum = 0;
 int memberNum = 0;
+int matchNum = 0;
 int matchCount = 0;
 List members = []; //['選手名', 合計獲得石数, [対局ごとの石数], 勝利数, 入力済み試合数]の形式で入力
 List<List<String>> matchingHistories = [];
@@ -63,6 +38,7 @@ void settings() {
   if (input0 != null && input1 != null) {
     gameNum = int.parse(input0);
     memberNum = int.parse(input1);
+    matchNum = (memberNum / 2).floor();
   }
   print('参加者名を入力してください。');
   for (var i = 0; i < memberNum; i++) {
@@ -81,32 +57,109 @@ void correctName() {
 }
 
 void matchings() {
-  print('対戦一覧表');
-  for (var i = 0; i < memberNum / 2; i++) {
+  matchCount += 1;
+  print('${matchCount}回戦');
+  for (var i = 0; i < matchNum; i++) {
     matchingHistories.add([(members[i * 2][0]), (members[i * 2 + 1][0])]);
     print('table${i + 1}: ${members[i * 2][0]} vs ${members[i * 2 + 1][0]}');
   }
-  matchCount += 1;
 }
 
 void avoidDuplication() {
-  //重複したマッチを回避する
-  //matchingHistoriesにて対局履歴を保存して、重複があった場合並び替えるようにする
-  // 1.対局履歴確認、重複マッチを見つける
-  // 2.ひとつ前の人と順番を入れ替える。前が存在しない場合は無視する。
-  // 3.後の人と入れ替える。後ろが存在しない場合は無視する。
-  // 4.2と3の入れ替え先を2つ先、3つ先と伸ばしていく。
-  // 5.最後まで実施しても重複しないマッチができない場合は手動で入力する。この都合でマッチ履歴はlistがいいかも
-  for (var i = 0; i < memberNum / 2; i++) {
-    if (matchingHistories
-        .contains([(members[i * 2][0]), (members[i * 2 + 1][0])])) {
-      print('ok');
-    }
+  List temporaryMembers = members;
+  for (var i = 0; i < matchNum; i++) {
+    //一回の対局数回、処理を繰り返す
+    // var playerA = temporaryMembers[i * 2][0];
+    // var playerB = temporaryMembers[i * 2 + 1][0];
+    matchingHistories.forEach((element) {
+      ///組み合わせがmatchingHistoriesに存在するかチェック
+      if (element.contains(temporaryMembers[i * 2][0]) &&
+          element.contains(temporaryMembers[i * 2 + 1][0])) {
+        var before = -1;
+        var after = 1;
+        List<Object> playerA;
+        List<Object> playerB;
+        print('重複あり');
+        while (true) {
+          if (i > 0) {
+            playerA = members[i * 2 + before];
+            playerB = members[i * 2];
+            temporaryMembers[i * 2] = playerA;
+            temporaryMembers[i * 2 + before] = playerB;
+            if (checkDuplication(temporaryMembers)) {
+              members = temporaryMembers;
+              break;
+            }
+            temporaryMembers = members;
+          }
+          if (i < matchNum) {
+            playerA = members[i * 2 + 1 + after];
+            playerB = members[i * 2 + 1];
+            temporaryMembers[i * 2 + 1] = playerA;
+            temporaryMembers[i * 2 + 1 + after] = playerB;
+            print('にばんめ');
+            print(temporaryMembers);
+            if (checkDuplication(temporaryMembers)) {
+              members = temporaryMembers;
+              break;
+            }
+            temporaryMembers = members;
+          }
+          if (i > 1) {
+            playerA = members[i * 2 + after];
+            playerB = members[i * 2];
+            temporaryMembers[i * 2] = playerA;
+            temporaryMembers[i * 2 + after] = playerB;
+            after++;
+            print('さんばんめ');
+            print(temporaryMembers);
+            if (checkDuplication(temporaryMembers)) {
+              members = temporaryMembers;
+              break;
+            }
+            temporaryMembers = members;
+          }
+          if (i < matchNum + before) {
+            playerA = members[i * 2 + 1 + before];
+            playerB = members[i * 2 + 1];
+            temporaryMembers[i * 2 + 1] = playerA;
+            temporaryMembers[i * 2 + 1 + before] = playerB;
+            before--;
+            print('よんばんめ');
+            print(temporaryMembers);
+            if (checkDuplication(temporaryMembers)) {
+              members = temporaryMembers;
+              break;
+            }
+            temporaryMembers = members;
+          }
+        }
+      }
+    });
   }
 }
 
+bool checkDuplication(list) {
+  if (list == null) return false;
+  //matchingHistoriesに更新後の組み合わせがあるかチェックする
+  bool result = false;
+  for (var i = 0; i < matchNum; i++) {
+    matchingHistories.forEach((element) {
+      if (element.contains(list[i * 2][0]) &&
+          element.contains(list[i * 2 + 1][0])) {
+        print('重複まだあるよ');
+        result = false;
+      } else {
+        result = true;
+      }
+    });
+  }
+  result = true; //一時的に必ずtrueを返すように設定
+  return result;
+}
+
 void inputResult() {
-  for (var i = 0; i < memberNum / 2; i++) {
+  for (var i = 0; i < matchNum; i++) {
     print('結果を入力する試合のtable番号を入力してください');
     var input3 = stdin.readLineSync();
     if (input3 != null) {
@@ -136,7 +189,7 @@ void inputResult() {
       }
     }
   }
-  for (var i = 0; i < memberNum / 2; i++) {
+  for (var i = 0; i < matchNum; i++) {
     print('table${i + 1}: ${members[i * 2][0]} vs ${members[i * 2 + 1][0]}');
     print(
         '${members[i * 2][2][matchCount - 1]} 対 ${members[i * 2 + 1][2][matchCount - 1]}');
@@ -159,7 +212,7 @@ void printResult() {
       }
     }
   }
-
+  //勝利数、石数の順でソートできるようにすること
   members.sort((a, b) => b[1].compareTo(a[1]));
   members.asMap().forEach((ranking, member) {
     print('${ranking + 1}位: ${member[0]} ${member[1]}石');
@@ -167,7 +220,7 @@ void printResult() {
 }
 
 void checkResult() {
-  for (var i = 0; i < memberNum / 2; i++) {
+  for (var i = 0; i < matchNum; i++) {
     print('table${i + 1}: ${members[i * 2][0]} vs ${members[i * 2 + 1][0]}');
     print(
         '${members[i * 2][2][matchCount - 1]} 対 ${members[i * 2 + 1][2][matchCount - 1]}');
