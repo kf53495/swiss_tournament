@@ -78,56 +78,66 @@ void avoidDuplication() {
         List<Object> playerB;
         print('重複あり');
         while (true) {
-          if (i > 0) {
+          if (i > 0 - (before / 2).floor()) {
+            // Aと前を入れ替える
+            // 1回目　before = -1 iは1以上
+            // 2回目　before = -2 iは1以上
             playerA = members[i * 2 + before];
             playerB = members[i * 2];
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + before] = playerB;
-            print('${i + 1}: いちばんめ');
+            print('${i + 1}: いちばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
             }
             temporaryMembers = members;
           }
-          if (i < matchNum) {
+          if (i < matchNum - (after / 2).ceil()) {
+            // Bと後を入れ替える
             playerA = members[i * 2 + 1 + after];
             playerB = members[i * 2 + 1];
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + after] = playerB;
-            print('${i + 1}: にばんめ');
+            print('${i + 1}: にばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
             }
             temporaryMembers = members;
           }
-          if (i > 1) {
+          if (i < matchNum - (after / 2).ceil()) {
+            // Aと後を入れ替える
             playerA = members[i * 2 + after];
             playerB = members[i * 2];
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + after] = playerB;
             after++;
-            print('${i + 1}: さんばんめ');
+            print('${i + 1}: さんばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
             }
             temporaryMembers = members;
           }
-          if (i < matchNum + before) {
+          if (i > 0 - (before / 2).floor()) {
+            // Bと前を入れ替える
             playerA = members[i * 2 + 1 + before];
             playerB = members[i * 2 + 1];
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + before] = playerB;
             before--;
-            print('${i + 1}: よんばんめ');
+            print('${i + 1}: よんばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
             }
             temporaryMembers = members;
+            continue;
           }
+          print('自動マッチングに失敗しました');
+          print(matchingHistories);
+          break;
         }
       }
     });
