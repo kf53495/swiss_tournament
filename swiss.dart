@@ -1,8 +1,3 @@
-// ・メンバー名を訂正
-// ・引き分けは0.5勝扱いにする
-
-// 結果入力画面
-// ・一度対戦した相手はもう一度当たらないようにすること⇨avoidDuplication
 // ・奇数人の場合はいったん考慮しないこととする
 
 import 'dart:io';
@@ -21,9 +16,11 @@ void main() {
     inputResult();
     printResult();
     print(matchingHistories);
+    if (i == gameNum) break;
     avoidDuplication();
   }
   print('最終結果');
+  members.sort((a, b) => b[1].compareTo(a[1]));
   members.asMap().forEach((ranking, member) {
     print(
         '${ranking + 1}位: ${member[3]}勝 ${member[0]} ${member[1]}石 (${member[2]}))');
@@ -80,13 +77,10 @@ void avoidDuplication() {
         while (true) {
           if (i > 0 - (before / 2).floor()) {
             // Aと前を入れ替える
-            // 1回目　before = -1 iは1以上
-            // 2回目　before = -2 iは1以上
             playerA = members[i * 2 + before];
             playerB = members[i * 2];
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + before] = playerB;
-            print('${i + 1}: いちばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -99,7 +93,6 @@ void avoidDuplication() {
             playerB = members[i * 2 + 1];
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + after] = playerB;
-            print('${i + 1}: にばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -113,7 +106,6 @@ void avoidDuplication() {
             temporaryMembers[i * 2] = playerA;
             temporaryMembers[i * 2 + after] = playerB;
             after++;
-            print('${i + 1}: さんばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -127,7 +119,6 @@ void avoidDuplication() {
             temporaryMembers[i * 2 + 1] = playerA;
             temporaryMembers[i * 2 + 1 + before] = playerB;
             before--;
-            print('${i + 1}: よんばんめ in while');
             if (checkDuplication(temporaryMembers)) {
               members = temporaryMembers;
               break;
@@ -149,24 +140,12 @@ bool checkDuplication(list) {
   //matchingHistoriesに更新後の組み合わせがあるかチェックする
   bool result = false;
   for (var i = 0; i < matchNum; i++) {
-    // matchingHistories.forEach((element) {
-    //   if (element.contains(list[i * 2][0]) &&
-    //       element.contains(list[i * 2 + 1][0])) {
-    //     print('${i + 1}: cd重複まだあるよ');
-    //     result = false;
-    //   } else {
-    //     print('${i + 1}: cd重複ないよ！');
-    //     result = true;
-    //   }
-    // });
     if (matchingHistories.any((element) =>
         element.contains(list[i * 2][0]) &&
         element.contains(list[i * 2 + 1][0]))) {
-      print('${i + 1}: cd重複まだあるよ');
       result = false;
       break;
     } else {
-      print('${i + 1}: cd重複ないよ！');
       result = true;
     }
   }
